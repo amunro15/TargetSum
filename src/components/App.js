@@ -3,7 +3,7 @@ import Game from './Game';
 
 class App extends React.Component {
   render() {
-    return <Game randomNumberCount={6} />;
+    return <Game initialSeconds={10} randomNumberCount={6} />;
   }
 }
 

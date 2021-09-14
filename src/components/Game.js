@@ -5,10 +5,12 @@ import RandomNumber from './RandomNumber';
 
 class Game extends React.Component {
   static propTypes = {
+    initialSeconds: PropTypes.number.isRequired,
     randomNumberCount: PropTypes.number.isRequired,
   };
 
   state = {
+    remainingSeconds: this.props.initialSeconds,
     selectedIds: [],
   };
 
@@ -19,6 +21,25 @@ class Game extends React.Component {
   target = this.randomNumbers
     .slice(0, this.props.randomNumberCount - 2)
     .reduce((acc, curr) => acc + curr, 0);
+
+  componentDidMount() {
+    this.intervalId = setInterval(() => {
+      this.setState(
+        prevState => {
+          return {remainingSeconds: prevState.remainingSeconds - 1};
+        },
+        () => {
+          if (this.state.remainingSeconds === 0) {
+            clearInterval(this.intervalId);
+          }
+        },
+      );
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.intervalId);
+  }
 
   isNumberSelected = numberIndex => {
     return this.state.selectedIds.indexOf(numberIndex) >= 0;
@@ -34,6 +55,9 @@ class Game extends React.Component {
     const sumSelected = this.state.selectedIds.reduce((acc, curr) => {
       return acc + this.randomNumbers[curr];
     }, 0);
+    if (this.state.remainingSeconds === 0) {
+      return 'LOST';
+    }
     if (sumSelected < this.target) {
       return 'PLAYING';
     }
@@ -49,19 +73,23 @@ class Game extends React.Component {
     const gameStatus = this.gameStatus();
     return (
       <View style={styles.container}>
-        <Text style={styles.target}>{this.target}</Text>
+        <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
+          {this.target}
+        </Text>
         <View style={styles.randomContainer}>
           {this.randomNumbers.map((randomNumber, index) => (
             <RandomNumber
               id={index}
-              isDisabled={this.isNumberSelected(index)}
+              isDisabled={
+                this.isNumberSelected(index) || gameStatus !== 'PLAYING'
+              }
               key={index}
               number={randomNumber}
               onPress={this.selectNumber}
             />
           ))}
         </View>
-        <Text style={styles.status}>{gameStatus}</Text>
+        <Text style={styles.status}>{this.state.remainingSeconds}</Text>
       </View>
     );
   }
@@ -74,7 +102,6 @@ const styles = StyleSheet.create({
   },
   target: {
     fontSize: 50,
-    backgroundColor: '#34a295',
     color: 'white',
     margin: 50,
     textAlign: 'center',
@@ -87,6 +114,15 @@ const styles = StyleSheet.create({
   },
   status: {
     padding: 50,
+  },
+  STATUS_PLAYING: {
+    backgroundColor: '#bbb',
+  },
+  STATUS_WON: {
+    backgroundColor: 'green',
+  },
+  STATUS_LOST: {
+    backgroundColor: 'red',
   },
 });
 
