@@ -6,9 +6,15 @@ Add-sum based mathematic game! Select four numbers to correctly sum to the numbe
 
 ## Local Development
 
-Yse [nvm](https://github.com/nvm-sh/nvm) for managing versions of Node.js across Javascript projects. This repo contains a `.nvmrc` file which specifies the minimum compatible version of Node.js required for working with this application.
+Use [nvm](https://github.com/nvm-sh/nvm) for managing versions of Node.js across Javascript projects.
 
 1. In a terminal window, navigate to your local copy of `TargetSum`.
-2. If `nvm` is configured run `nvm use`, otherwise ensure your current version of Node.js meets or exceeds the version specified in `.nvmrc`.
-3. Run `npx react-native start`.
-4. Run `npx react-native run-ios`.
+2. Ensure you have the following installed: Homebrew, Node, Watchman, Cocoapods, ReactNative
+3. Download Xcode, open Preferences > Locations and install tools by selecting the most recent version in the Command Line Tools dropdown.
+```
+$ cd ios
+$ pod install
+$ cd ..
+$ npx react-native start
+$ npx react-native run-ios
+```
